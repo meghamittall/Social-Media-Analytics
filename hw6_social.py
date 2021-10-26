@@ -5,6 +5,7 @@ Roll Number:
 """
 
 import hw6_social_tests as test
+import re
 
 project = "Social" # don't edit this
 
@@ -25,17 +26,27 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    return pd.read_csv(filename)
+    
+   
+    
 
 
 '''
+
 parseName(fromString)
 #4 [Check6-1]
 Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    start = fromString.find("From:") +  len("From:")
+    fromString = fromString[start:]
+    end = fromString.find(" (")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    name=fromString
+    return name
 
 
 '''
@@ -45,7 +56,13 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    start = fromString.find(" (") + len(" (")
+    fromString = fromString[start:]
+    end = fromString.find("from")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    position=fromString
+    return position
 
 
 '''
@@ -55,7 +72,15 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    start = fromString.find(" from") + len(" from")
+    fromString = fromString[start:]
+    end = fromString.find(")")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    state=fromString
+    return state
+
+    
 
 
 '''
@@ -65,7 +90,11 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    regex = r"#\w+"
+    hashtags = re.findall(regex,message)
+    return hashtags
+
+
 
 
 '''
@@ -75,7 +104,8 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    region = stateDf.loc[stateDf['state'] == state, 'region']
+    return (region.values[0])
 
 
 '''
@@ -85,7 +115,31 @@ Parameters: dataframe ; dataframe
 Returns: None
 '''
 def addColumns(data, stateDf):
-    return
+    names = []
+    positions = []
+    states = []
+    regions = []
+    hashtags = []
+    for index, row in data.iterrows():
+        #print(row)
+        val = row["label"]
+        name = parseName(val)
+        position = parsePosition(val)
+        state= parseState(val)
+        region = getRegionFromState(stateDf,parseState(val))
+        val2=row['text']
+        hashtag = findHashtags(val2)
+        names.append(name)
+        positions.append(position)
+        states.append(state)
+        regions.append(region)
+        hashtags.append(hashtag)
+    data['name']= names
+    data['position'] = positions
+    data['state'] = states
+    data['region'] = regions
+    data['hashtags'] = hashtags 
+    return None
 
 
 ### PART 2 ###
@@ -262,17 +316,18 @@ def scatterPlot(xValues, yValues, labels, title):
 
 # This code runs the test cases to check your work
 if __name__ == "__main__":
-    print("\n" + "#"*15 + " WEEK 1 TESTS " +  "#" * 16 + "\n")
-    ##test.week1Tests()
-    print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
-    ##test.runWeek1()
+    # print("\n" + "#"*15 + " WEEK 1 TESTS " +  "#" * 16 + "\n")
+    # ##test.week1Tests()
+    # print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
+    # ##test.runWeek1()
+    test.testAddColumns()
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
     test.week2Tests()
     print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek2()"""
+    ##test.runWeek2()"""
 
     ## Uncomment these for Week 3 ##
     """print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek3()"""
+    ##test.runWeek3()"""
