@@ -5,6 +5,7 @@ Roll Number:
 """
 
 import hw6_social_tests as test
+import re
 
 project = "Social" # don't edit this
 
@@ -89,7 +90,11 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    regex = r"#\w+"
+    hashtags = re.findall(regex,message)
+    return hashtags
+
+
 
 
 '''
@@ -290,7 +295,7 @@ if __name__ == "__main__":
     # ##test.week1Tests()
     # print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
     # ##test.runWeek1()
-    test. testParseState()
+    test. testFindHashtags()
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
