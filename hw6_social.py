@@ -39,7 +39,13 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    start = fromString.find("From:") +  len("From:")
+    fromString = fromString[start:]
+    end = fromString.find(" (")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    name=fromString
+    return name
 
 
 '''
@@ -49,7 +55,13 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    start = fromString.find(" (") + len(" (")
+    fromString = fromString[start:]
+    end = fromString.find("from")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    position=fromString
+    return position
 
 
 '''
@@ -270,7 +282,7 @@ if __name__ == "__main__":
     # ##test.week1Tests()
     # print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
     # ##test.runWeek1()
-    test.testMakeDataFrame() 
+    test. testParsePosition()
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
