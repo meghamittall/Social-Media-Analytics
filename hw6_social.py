@@ -187,7 +187,16 @@ Parameters: dataframe ; str ; str
 Returns: dict mapping strs to ints
 '''
 def getDataCountByState(data, colName, dataToCount):
-    return
+    datadict = {}
+    for index, row in data.iterrows():
+        if row[colName] == dataToCount:
+            state = row['state']
+            if state  not in datadict:
+                datadict[state] = 0
+            datadict[state] += 1
+    return datadict
+
+    
 
 
 '''
@@ -334,7 +343,7 @@ if __name__ == "__main__":
     # ##test.week1Tests()
     # print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
     # ##test.runWeek1()
-    test.testAddSentimentColumn()
+    test.testGetDataCountByState()
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
