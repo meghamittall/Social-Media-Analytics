@@ -230,7 +230,15 @@ Parameters: dataframe
 Returns: dict mapping strs to ints
 '''
 def getHashtagRates(data):
-    return
+    hashtag_count_dict = {}
+    for index, row in data.iterrows():
+        hashtags = row["hashtags"]
+        for hashtag in hashtags:
+            if hashtag not in hashtag_count_dict:
+                hashtag_count_dict[hashtag] = 0
+            hashtag_count_dict[hashtag] += 1
+    print(hashtag_count_dict)
+    return hashtag_count_dict
 
 
 '''
@@ -361,7 +369,7 @@ if __name__ == "__main__":
     stateDf = makeDataFrame("data/statemappings.csv")
     addColumns(df, stateDf)
     addSentimentColumn(df)
-    test.testGetDataForRegion(df)
+    test.testGetHashtagRates(df)
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
