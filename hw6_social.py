@@ -258,7 +258,14 @@ Parameters: dict mapping strs to ints ; int
 Returns: dict mapping strs to ints
 '''
 def mostCommonHashtags(hashtags, count):
-    return
+    most_common_hashtags_dict = {}
+    for key, value in sorted(   hashtags.items(), key=lambda item: item[1], reverse=True):
+        most_common_hashtags_dict[key]=value
+        if len(most_common_hashtags_dict) == count:
+            break
+    return most_common_hashtags_dict
+
+    
 
 
 '''
@@ -379,7 +386,7 @@ if __name__ == "__main__":
     stateDf = makeDataFrame("data/statemappings.csv")
     addColumns(df, stateDf)
     addSentimentColumn(df)
-    test.testGetHashtagRates(df)
+    test.testMostCommonHashtags(df)
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
