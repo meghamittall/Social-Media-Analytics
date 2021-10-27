@@ -90,8 +90,18 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    regex = r"#\w+"
-    hashtags = re.findall(regex,message)
+    word = message.split('#')
+    hashtags = []
+    temp_string = ""
+    for i in range(1,len(word)):
+        for j in word[i]:
+            if j in endChars:
+                break
+            else:
+                temp_string += j
+        temp_string = "#" + temp_string
+        hashtags.append(temp_string)
+        temp_string = ""
     return hashtags
 
 
@@ -237,7 +247,7 @@ def getHashtagRates(data):
             if hashtag not in hashtag_count_dict:
                 hashtag_count_dict[hashtag] = 0
             hashtag_count_dict[hashtag] += 1
-    print(hashtag_count_dict)
+    # print(hashtag_count_dict)
     return hashtag_count_dict
 
 
