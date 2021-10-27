@@ -206,7 +206,21 @@ Parameters: dataframe ; str
 Returns: dict mapping strs to (dicts mapping strs to ints)
 '''
 def getDataForRegion(data, colName):
-    return
+    regions = {}
+    convert_dictionary_groupby = dict(data.groupby(["region", colName]).size())
+    print(convert_dictionary_groupby)
+    for key in convert_dictionary_groupby:
+        region = key[0]
+        inner_key = key[1]
+        value = convert_dictionary_groupby[key]
+        if region not in regions:
+            regions[region] = {}
+            regions[region][inner_key] = value
+        else:
+            regions[region][inner_key] = value
+    print(regions)
+    return regions 
+    
 
 
 '''
@@ -347,7 +361,7 @@ if __name__ == "__main__":
     stateDf = makeDataFrame("data/statemappings.csv")
     addColumns(df, stateDf)
     addSentimentColumn(df)
-    test.testGetDataCountByState(df)
+    test.testGetDataForRegion(df)
 
     ## Uncomment these for Week 2 ##
     """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
