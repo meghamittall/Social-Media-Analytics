@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+# from pandas.io.parsers import count_empty_vals
 import hw6_social_tests as test
 import re
 
@@ -275,8 +276,24 @@ Parameters: dataframe ; str
 Returns: float
 '''
 def getHashtagSentiment(data, hashtag):
-    
-    return
+    message_count = 0
+    score_lst = []
+    for index, row in data.iterrows():
+        if hashtag in row['text']:
+            message_count += 1
+            if row['sentiment'] == 'positive':
+                value = 1
+                score_lst.append(value)
+            if row['sentiment'] == 'negative':
+                value = -1
+                score_lst.append(value)
+            if row['sentiment'] == 'neutral':
+                value = 0
+                score_lst.append(value)
+    sentiment_score = sum(score_lst)/message_count
+    print(sentiment_score)
+    return sentiment_score
+
 
 
 ### PART 3 ###
@@ -387,13 +404,13 @@ if __name__ == "__main__":
     stateDf = makeDataFrame("data/statemappings.csv")
     addColumns(df, stateDf)
     addSentimentColumn(df)
-    test.testMostCommonHashtags(df)
+    test.testGetHashtagSentiment(df)
 
     ## Uncomment these for Week 2 ##
-    """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
-    test.week2Tests()
-    print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
-    ##test.runWeek2()"""
+    # print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
+    # test.week2Tests()
+    # print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
+    # test.runWeek2()
 
     ## Uncomment these for Week 3 ##
     """print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
