@@ -333,6 +333,17 @@ Parameters: dict mapping strs to ints ; dict mapping strs to ints ; int ; str
 Returns: None
 '''
 def graphTopNStates(stateCounts, stateFeatureCounts, n, title):
+    feature_rate_dict ={}
+    top_states_dict ={}
+    for i in stateFeatureCounts:
+        feature_rate_dict[i] = (stateFeatureCounts[i] / stateCounts[i])
+    for key, value in sorted(feature_rate_dict.items(), key=lambda item: item[1], reverse=True):
+        top_states_dict[key]=value
+        if len(top_states_dict) == n:
+            break
+    graphStateCounts(top_states_dict, title)
+    
+    
     
     
 
