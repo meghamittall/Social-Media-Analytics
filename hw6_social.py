@@ -291,7 +291,6 @@ def getHashtagSentiment(data, hashtag):
                 value = 0
                 score_lst.append(value)
     sentiment_score = sum(score_lst)/message_count
-    print(sentiment_score)
     return sentiment_score
 
 
