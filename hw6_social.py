@@ -4,7 +4,9 @@ Name:
 Roll Number:
 """
 
+# from pandas.io.parsers import count_empty_vals
 import hw6_social_tests as test
+import re
 
 project = "Social" # don't edit this
 
@@ -25,17 +27,27 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    return pd.read_csv(filename)
+    
+   
+    
 
 
 '''
+
 parseName(fromString)
 #4 [Check6-1]
 Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    start = fromString.find("From:") +  len("From:")
+    fromString = fromString[start:]
+    end = fromString.find(" (")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    name=fromString
+    return name
 
 
 '''
@@ -45,7 +57,13 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    start = fromString.find(" (") + len(" (")
+    fromString = fromString[start:]
+    end = fromString.find("from")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    position=fromString
+    return position
 
 
 '''
@@ -55,7 +73,15 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    start = fromString.find(" from") + len(" from")
+    fromString = fromString[start:]
+    end = fromString.find(")")
+    fromString = fromString[:end]
+    fromString = fromString.strip()
+    state=fromString
+    return state
+
+    
 
 
 '''
@@ -65,7 +91,21 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    word = message.split('#')
+    hashtags = []
+    temp_string = ""
+    for i in range(1,len(word)):
+        for j in word[i]:
+            if j in endChars:
+                break
+            else:
+                temp_string += j
+        temp_string = "#" + temp_string
+        hashtags.append(temp_string)
+        temp_string = ""
+    return hashtags
+
+
 
 
 '''
@@ -75,7 +115,8 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    region = stateDf.loc[stateDf['state'] == state, 'region']
+    return (region.values[0])
 
 
 '''
@@ -85,7 +126,31 @@ Parameters: dataframe ; dataframe
 Returns: None
 '''
 def addColumns(data, stateDf):
-    return
+    names = []
+    positions = []
+    states = []
+    regions = []
+    hashtags = []
+    for index, row in data.iterrows():
+        #print(row)
+        val = row["label"]
+        name = parseName(val)
+        position = parsePosition(val)
+        state= parseState(val)
+        region = getRegionFromState(stateDf,parseState(val))
+        val2=row['text']
+        hashtag = findHashtags(val2)
+        names.append(name)
+        positions.append(position)
+        states.append(state)
+        regions.append(region)
+        hashtags.append(hashtag)
+    data['name']= names
+    data['position'] = positions
+    data['state'] = states
+    data['region'] = regions
+    data['hashtags'] = hashtags 
+    return None
 
 
 ### PART 2 ###
@@ -98,7 +163,13 @@ Returns: str
 '''
 def findSentiment(classifier, message):
     score = classifier.polarity_scores(message)['compound']
-    return
+    if score < -0.1:
+        return "negative"
+    elif score > 0.1:
+        return "positive"
+    else:
+        return "neutral"
+    
 
 
 '''
@@ -109,6 +180,14 @@ Returns: None
 '''
 def addSentimentColumn(data):
     classifier = SentimentIntensityAnalyzer()
+    sentiments =[]
+    for index, row in data.iterrows():
+        val = row['text']
+        sentiments.append(findSentiment(classifier, val))
+    data['sentiment'] = sentiments
+    return None
+
+
     return
 
 
@@ -119,7 +198,16 @@ Parameters: dataframe ; str ; str
 Returns: dict mapping strs to ints
 '''
 def getDataCountByState(data, colName, dataToCount):
-    return
+    datadict = {}
+    for index, row in data.iterrows():
+        if ((len(colName)==0 and len(dataToCount) == 0) or (row[colName] == dataToCount)) :
+            state = row['state']
+            if state  not in datadict:
+                datadict[state] = 0
+            datadict[state] += 1
+    return datadict
+
+    
 
 
 '''
@@ -129,7 +217,21 @@ Parameters: dataframe ; str
 Returns: dict mapping strs to (dicts mapping strs to ints)
 '''
 def getDataForRegion(data, colName):
-    return
+    regions = {}
+    convert_dictionary_groupby = dict(data.groupby(["region", colName]).size())
+    print(convert_dictionary_groupby)
+    for key in convert_dictionary_groupby:
+        region = key[0]
+        inner_key = key[1]
+        value = convert_dictionary_groupby[key]
+        if region not in regions:
+            regions[region] = {}
+            regions[region][inner_key] = value
+        else:
+            regions[region][inner_key] = value
+    print(regions)
+    return regions 
+    
 
 
 '''
@@ -139,7 +241,15 @@ Parameters: dataframe
 Returns: dict mapping strs to ints
 '''
 def getHashtagRates(data):
-    return
+    hashtag_count_dict = {}
+    for index, row in data.iterrows():
+        hashtags = row["hashtags"]
+        for hashtag in hashtags:
+            if hashtag not in hashtag_count_dict:
+                hashtag_count_dict[hashtag] = 0
+            hashtag_count_dict[hashtag] += 1
+    # print(hashtag_count_dict)
+    return hashtag_count_dict
 
 
 '''
@@ -149,7 +259,14 @@ Parameters: dict mapping strs to ints ; int
 Returns: dict mapping strs to ints
 '''
 def mostCommonHashtags(hashtags, count):
-    return
+    most_common_hashtags_dict = {}
+    for key, value in sorted(   hashtags.items(), key=lambda item: item[1], reverse=True):
+        most_common_hashtags_dict[key]=value
+        if len(most_common_hashtags_dict) == count:
+            break
+    return most_common_hashtags_dict
+
+    
 
 
 '''
@@ -159,7 +276,23 @@ Parameters: dataframe ; str
 Returns: float
 '''
 def getHashtagSentiment(data, hashtag):
-    return
+    message_count = 0
+    score_lst = []
+    for index, row in data.iterrows():
+        if hashtag in row['text']:
+            message_count += 1
+            if row['sentiment'] == 'positive':
+                value = 1
+                score_lst.append(value)
+            if row['sentiment'] == 'negative':
+                value = -1
+                score_lst.append(value)
+            if row['sentiment'] == 'neutral':
+                value = 0
+                score_lst.append(value)
+    sentiment_score = sum(score_lst)/message_count
+    return sentiment_score
+
 
 
 ### PART 3 ###
@@ -262,17 +395,22 @@ def scatterPlot(xValues, yValues, labels, title):
 
 # This code runs the test cases to check your work
 if __name__ == "__main__":
-    print("\n" + "#"*15 + " WEEK 1 TESTS " +  "#" * 16 + "\n")
-    ##test.week1Tests()
-    print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
-    ##test.runWeek1()
+    # print("\n" + "#"*15 + " WEEK 1 TESTS " +  "#" * 16 + "\n")
+    # test.week1Tests()
+    # print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
+    # test.runWeek1()
+    # df = makeDataFrame("data/politicaldata.csv")
+    # stateDf = makeDataFrame("data/statemappings.csv")
+    # addColumns(df, stateDf)
+    # addSentimentColumn(df)
+    # test.testGetHashtagSentiment(df)
 
     ## Uncomment these for Week 2 ##
-    """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
-    test.week2Tests()
-    print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek2()"""
+    # print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
+    # test.week2Tests()
+    # print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
+    # test.runWeek2()
 
     ## Uncomment these for Week 3 ##
-    """print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek3()"""
+    print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
+    test.runWeek3()
