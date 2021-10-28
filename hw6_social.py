@@ -275,6 +275,7 @@ Parameters: dataframe ; str
 Returns: float
 '''
 def getHashtagSentiment(data, hashtag):
+    
     return
 
 
