@@ -305,8 +305,26 @@ Returns: None
 '''
 def graphStateCounts(stateCounts, title):
     import matplotlib.pyplot as plt
-    return
+    states = list(stateCounts.keys())
+    count = list(stateCounts.values())
+    fig = plt.figure(figsize = (10, 50))
+    plt.bar(states, count, color ='maroon',
+        width = 0.8)
+    plt.xticks(rotation = 90)
+    plt.title(title)
+    plt.show()
 
+    # state = []
+    # count = []
+    # for key, value in stateCounts.items():
+    #     state.append(key)
+    #     count.append(value)
+    # plt.bar(state, count)
+    
+    # plt.xticks(rotation=90)
+    # plt.show()
+    # return None
+    
 
 '''
 graphTopNStates(stateCounts, stateFeatureCounts, n, title)
