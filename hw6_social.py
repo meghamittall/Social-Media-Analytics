@@ -229,7 +229,7 @@ def getDataForRegion(data, colName):
             regions[region][inner_key] = value
         else:
             regions[region][inner_key] = value
-    print(regions)
+    # print(regions)
     return regions 
     
 
