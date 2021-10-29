@@ -359,9 +359,9 @@ def graphRegionComparison(regionDicts, title):
     feature_lst = []
     region_feature_lst = []
 
-    for keys,values in regionDicts.items():
-        print(keys)
-        print(values)
+    # for keys,values in regionDicts.items():
+    #     print(keys)
+    #     print(values)
     
     for region in regionDicts:
         for feature in regionDicts[region]:
@@ -369,8 +369,8 @@ def graphRegionComparison(regionDicts, title):
                 region_lst.append(region)
             if feature not in feature_lst:
                feature_lst.append(feature)
-    print("region list", region_lst)
-    print("feature list", feature_lst)
+    # print("region list", region_lst)
+    # print("feature list", feature_lst)
 
     for region in regionDicts:
         temp_lst=[0] * len(feature_lst)
@@ -378,7 +378,7 @@ def graphRegionComparison(regionDicts, title):
             if feature_lst[i] in regionDicts[region]:
                 temp_lst[i]+=1
         region_feature_lst.append(temp_lst)         
-    print("region_feature_lst",region_feature_lst)
+    # print("region_feature_lst",region_feature_lst)
     sideBySideBarPlots(feature_lst, region_lst, region_feature_lst, title)
 
 
@@ -389,6 +389,22 @@ Parameters: dataframe
 Returns: None
 '''
 def graphHashtagSentimentByFrequency(data):
+    hashtags_dict = getHashtagRates(data)
+    most_common_dict = mostCommonHashtags(hashtags_dict, 50)
+    hashtags_lst = []
+    frequencies_lst = []
+    sentiment_score_lst = []
+    for hashtag, freq in most_common_dict.items():
+        score = getHashtagSentiment(data, hashtag)
+        hashtags_lst.append(hashtag)
+        frequencies_lst.append(freq)
+        sentiment_score_lst.append(score)
+    # print("hashtags_dict", hashtags_dict)
+    # print("frequencies_lst", frequencies_lst)
+    # print("sentiment_score_lst", sentiment_score_lst)
+    scatterPlot(frequencies_lst, sentiment_score_lst, hashtags_lst, "Graph Hashtag Sentiments to Frequencies")    
+
+
     return
 
 
